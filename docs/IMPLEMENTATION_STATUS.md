@@ -1,39 +1,55 @@
 # Implementation status
 
 Date: 2026-10-01  
-Branch: feat/marketplace-foundation
+Branch: feat/marketplace-foundation  
+Pull request: https://github.com/surkhettimes05-boop/Secondhand-market/pull/1
 
 ## Delivered
 
 - Next.js/TypeScript application skeleton and responsive design system.
-- Home, searchable inventory, detail, saved listings, posting and preview-information pages.
+- Home, searchable inventory, listing detail, saved listings, four-stage posting and preview-information pages.
 - English/Nepali UI, clear prototype disclosure and sample-specific descriptions.
 - Working URL filters, category/price sorting, local favorites and local text drafts.
 - Temporary photo previews with explicit non-upload/non-persistence messaging.
-- Domain tests for decimal money, bilingual filtering, status exclusion, URL validation and draft costs.
-- GitHub Actions typecheck/test/build workflow.
-- Proposed PostgreSQL schema baseline; not applied and not connected.
+- Domain tests for decimal money, bilingual filtering, status exclusion, URL normalization and draft costs.
+- Desktop/mobile browser tests for home layout, search/reset, favorites/language persistence and draft validation/restoration.
+- CI typecheck/test/build/browser verification and screenshot artifacts.
+- Proposed PostgreSQL schema baseline; not applied or connected.
 
-## Verification
+## Verification evidence
 
-The connected execution environment remained pending/offline during implementation, so local dependency installation, compiler, tests and browser review could not be executed there. Checks are configured in GitHub Actions; do not treat configuration as a passing result. Source was reviewed for typing, lifecycle boundaries and honest prototype behavior. The source upload is verified separately through GitHub.
+Verified implementation commit: `97c14c2388b2300a76901675090d7c33ad60f295`.
 
-A passing CI run and actual mobile/desktop browser review are required before this slice is considered verified. No production deployment was requested or performed.
+[GitHub Actions run](https://github.com/surkhettimes05-boop/Secondhand-market/actions/runs/36917000463) completed successfully:
+- Dependency installation.
+- TypeScript type check.
+- Domain tests.
+- Next.js production build.
+- Playwright tests against the production server on desktop Chrome and mobile Chrome.
+- Screenshot/report artifact upload: `browser-review`.
 
-## Incomplete phases
+Screenshots of home and posting review are in the artifact alongside test reports. The browser suite checks home horizontal overflow, page errors, URL filters, local favorites, language persistence and draft validation/save/restore.
 
-- Local user research and validated ward/neighbourhood directory.
+The connected cloud execution environment remained pending/offline, so verification ran in GitHub Actions. Screenshots have not received a manual visual review. Automated success does not establish WCAG compliance, local usability, production readiness or SMS/provider feasibility.
+
+No production deployment was requested or performed. The SQL baseline is not executed or verified against a database.
+
+## Remaining work
+
+- Local research and validated ward/neighbourhood directory.
 - Licensed self-hosted typography and final brand.
-- Dependency lockfile and browser screenshot/accessibility baseline.
-- OTP/MFA, accounts, server authorization and provider selection.
-- PostgreSQL-backed persistence and media processing.
-- Moderation/versioning/report/appeal console.
+- Reviewed dependency lockfile and manual screenshot/accessibility review.
+- OTP/admin MFA, accounts, server authorization and provider selection.
+- PostgreSQL persistence, structured category fields and media processing.
+- Moderation/revisions/reports/appeals.
 - Availability jobs and genuine contact consent/reveal/inquiries.
-- Retention/deletion/backup/monitoring implementation.
-- Real inventory, policies/legal review and pilot launch gates.
+- Retention/deletion/backup/monitoring.
+- Approved real inventory, policies/legal review and pilot launch gates.
 
-## Scope decisions
+## Scope boundaries
 
-This slice starts the plan with a reviewable prototype plus foundation code. It does not claim completion of Phase 0 or production R1. Sample localities are placeholders, with no ward/boundary claim. Posting groups category details into a prototype text field; the backend phase must implement every structured PRD field.
+This slice starts the plan with a tested prototype plus initial foundation. It does not claim completion of Phase 0 or production R1. Sample localities are placeholders; no validated ward/boundary claim is made.
 
-All real publishing and seller contact remain unavailable until identity, permissions, moderation and consent are implemented.
+Posting groups category details in a prototype text field. The backend phase must implement all structured PRD fields and server-side validation. Only text drafts/favorites/language persist locally; photos remain temporary.
+
+Real publishing and seller contact remain unavailable until identity, permissions, moderation and consent are implemented. PR stays draft pending manual design review and backend phase planning.
