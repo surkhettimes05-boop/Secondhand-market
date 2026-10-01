@@ -52,3 +52,7 @@ enabled = false
 enabled = false
 [edge_runtime]
 enabled = false
+
+[auth.email.template.email_change]
+subject = "Verify your Surkhet Market moderator email"
+content_path = "./supabase/templates/email_change.html"
