@@ -1,49 +1,41 @@
 # Surkhet Market
 
-Mobile-first Birendranagar marketplace, following [the PRD](docs/PRD.md) and [the phased implementation plan](docs/IMPLEMENTATION_PLAN.md).
+A mobile-first local marketplace for Birendranagar: land sales, housing rentals and secondhand goods.
 
-## Current implementation
+- [PRD](docs/PRD.md)
+- [Phased implementation/design plan](docs/IMPLEMENTATION_PLAN.md)
+- [Backend setup](docs/BACKEND_SETUP.md)
+- [Backend status](docs/BACKEND_STATUS.md)
 
-Phase 1 design preview and initial application foundation:
-- Responsive home, search, listing detail, saved listings and four-stage posting screens.
-- English/Nepali interface toggle and illustrative inventory.
-- Working bilingual search, price/category/locality filters and URL state.
-- Device-local favorites and text drafts; temporary photo previews.
-- Typed domain rules, monetary validation, meaningful domain tests and CI checks.
+## Modes
 
-**This is a prototype, not a production marketplace.** No real accounts, sellers, publication, contact, verified identity, payments or server persistence exist yet. Sample photographs are not evidence of local properties. All preview routes request no indexing.
+**Preview** (default): clearly labelled sample inventory; local favorites/text drafts and temporary photo previews. No real transactions.
 
-## Run locally
+**Live**: Supabase phone login, persistent drafts, processed private photo uploads, MFA-gated moderation, reviewed publication, owner lifecycle controls, account favorites, seller-contact consent, inquiries/reports/appeals, notifications and expiry jobs. Real services must be configured; live outages never show sample listings.
 
-Requires Node.js 22.18+ and npm.
+## Run
 
-1. Run `npm install`.
-2. Run `npm run dev`.
-3. Open http://localhost:3000.
+Node.js 22.18+ required.
 
-Verification: `npm run typecheck`, `npm test`, `npm run build`.
+1. `npm install`
+2. Copy `.env.example` to private `.env.local` (leave MARKET_MODE=preview to explore without services).
+3. `npm run dev`, then open http://localhost:3000.
 
-Browser verification: after a build, run `npx playwright install chromium` and `npm run test:e2e`. The test runner starts the production server automatically. CI runs desktop/mobile browser flows and uploads screenshots/reports.
+Checks: `npm run typecheck`, `npm test`, `npm run build`.
 
-[Passing CI evidence](https://github.com/surkhettimes05-boop/Secondhand-market/actions/runs/36917000463) covers the implementation commit recorded in the status document.
+Preview browser checks: `npx playwright install chromium` then `npm run test:e2e`.
+Live integration: follow BACKEND_SETUP.md, then `npm run test:e2e:live`.
 
-Dependencies currently use compatible version ranges. CI installs them directly; generating and committing a reviewed package lock is an outstanding foundation task once the runtime is available.
+## Architecture
 
-## Structure
+Next.js App Router; Supabase SSR sessions; Zod domain validation; PostgreSQL RPCs/RLS; Sharp photo processing; private Supabase storage; Playwright and PostgreSQL security tests.
 
-- `src/app`: Next.js App Router pages, metadata and design tokens/styles.
-- `src/components`: product screens and shared UI.
-- `src/lib`: domain types, filtering, currency and draft validation.
-- `tests`: money/search/draft-validation tests.
-- `db`: proposed schema baseline for the backend phase.
-- `docs`: requirements, plan and current implementation status.
+Apply only `supabase/migrations`. `db/001_marketplace_foundation.sql` is an older proposed schema, not the executable integration.
 
-## Privacy and fixtures
+The server-only service key is used for processed storage operations and expiry jobs, not caller business authorization. Never commit secrets. Fixed SMS fixtures in the local Supabase config are test-only and must not be enabled in hosted production.
 
-Language, favorites and text drafts are browser-local. Photos use temporary object URLs and are not uploaded or persisted. Avoid entering sensitive information. Unsplash image requests and Google Fonts requests are external. Replace with licensed self-hosted brand fonts and seller-owned photos before production.
+## Readiness
 
-Illustrative Unsplash photos are linked for design evaluation; they are not imported marketplace listings or owner-approved local inventory. Real launch inventory must have seller permission.
+Uploading code does not provision real SMS/database services or deploy a production marketplace. See setup/status documents for verified checks, deliberate boundaries and remaining launch gates. Photo removal/reorder, retention/erasure, orphan cleanup and scaling remain further work.
 
-## Next slice
-
-Provider/locality decisions, phone identity and admin MFA, database migrations, authenticated drafts/media, reviewed submissions, lifecycle jobs and public/private projections. See [implementation status](docs/IMPLEMENTATION_STATUS.md).
+Homepage illustrative photography comes from Unsplash; Google Fonts is temporary. Real listings require seller-owned/authorized photos. Self-host licensed brand fonts before public launch.
