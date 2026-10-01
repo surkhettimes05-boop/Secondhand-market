@@ -9,7 +9,7 @@ The executable schema is under `supabase/migrations`. The old `db/001_marketplac
 ## Live project prerequisites
 
 1. Create/select a Supabase project. Review its region, billing and backup plan.
-2. Enable phone authentication, configure a Nepal-compatible SMS provider, and test real delivery. Set OTP expiry to 300 seconds, resend cooldown of at least 60 seconds, appropriate send/verification limits and production bot protection.
+2. Enable phone authentication, configure a Nepal-compatible SMS provider, and test real delivery. Set OTP expiry to 300 seconds, resend cooldown of at least 60 seconds, appropriate send/verification limits and production bot protection. For Turnstile, configure native Supabase CAPTCHA with the secret key and set NEXT_PUBLIC_TURNSTILE_SITE_KEY before building the app. The login screen submits provider challenge tokens.
 3. Enable TOTP MFA. Moderators need a verified phone and enrolled authenticator.
 4. Apply migrations with the Supabase CLI against the selected project. Review migration output and RLS tests first.
 5. Configure server environment values privately:
