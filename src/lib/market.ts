@@ -2,6 +2,10 @@ export type Language = "en" | "ne";
 export type Category = "rent" | "land" | "items";
 export type Listing = {
   id: string;
+  isSample?: boolean;
+  confirmedAt?: string;
+  images?: string[];
+  details?: Record<string, string | number | boolean>;
   category: Category;
   title: Record<Language, string>;
   description: Record<Language, string>;
