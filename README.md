@@ -23,6 +23,10 @@ Requires Node.js 22.18+ and npm.
 
 Verification: `npm run typecheck`, `npm test`, `npm run build`.
 
+Browser verification: after a build, run `npx playwright install chromium` and `npm run test:e2e`. The test runner starts the production server automatically. CI runs desktop/mobile browser flows and uploads screenshots/reports.
+
+[Passing CI evidence](https://github.com/surkhettimes05-boop/Secondhand-market/actions/runs/36917000463) covers the implementation commit recorded in the status document.
+
 Dependencies currently use compatible version ranges. CI installs them directly; generating and committing a reviewed package lock is an outstanding foundation task once the runtime is available.
 
 ## Structure
