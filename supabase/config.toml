@@ -33,6 +33,13 @@ max_frequency = "1m"
 "9779800000002" = "123456"
 "9779800000003" = "123456"
 "9779800000004" = "123456"
+# Local GoTrue still requires an enabled provider with test_otp fixtures.
+# Dummy values cannot deliver SMS. Hosted production must use real provider configuration.
+[auth.sms.twilio]
+enabled = true
+account_sid = "AC00000000000000000000000000000000"
+message_service_sid = "MG00000000000000000000000000000000"
+auth_token = "local-test-provider-no-real-sms"
 [auth.mfa]
 max_enrolled_factors = 3
 [auth.mfa.totp]
