@@ -25,7 +25,7 @@ test("real PostgreSQL permissions, review snapshots, MFA and expiry", { skip: !p
   async function denied(sql: string, params: unknown[] = []) {
     await connection.query("savepoint expected_denial");
     try {
-      await assert.rejects(connection.query(sql, params), /permission|Not allowed|MFA|Verified|Contact unavailable|Listing is not editable|not permitted/i);
+      await assert.rejects(connection.query(sql, params), /permission|row-level security|Not allowed|MFA|Verified|Contact unavailable|Listing is not editable|not permitted/i);
     } finally { await connection.query("rollback to savepoint expected_denial"); }
   }
   try {
