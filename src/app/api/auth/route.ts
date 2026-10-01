@@ -4,7 +4,7 @@ import { userClient } from "@/server/supabase";
 import { normalizeNepalPhone } from "@/lib/listing-input";
 const input = z.discriminatedUnion("action", [
   z.object({ action: z.literal("send"), phone: z.string().max(30), captchaToken: z.string().max(3000).optional() }),
-  z.object({ action: z.literal("verify"), phone: z.string().max(30), code: z.string().regex(/^\d{6}$/) }),
+  z.object({ action: z.literal("verify"), phone: z.string().max(30), code: z.string().regex(/^\d{6}$/), captchaToken: z.string().max(3000).optional() }),
   z.object({ action: z.literal("signout") }),
 ]);
 export const GET = handle(async () => {
@@ -29,7 +29,7 @@ export const POST = handle(async request => {
     if (error) throw new HttpError(error.status === 429 ? 429 : 400, "The code could not be sent. Check the number, wait a minute and try again.");
     return json({ ok: true });
   }
-  const { error } = await client.auth.verifyOtp({ phone, token: value.code, type: "sms" });
+  const { error } = await client.auth.verifyOtp({ phone, token: value.code, type: "sms", options: { captchaToken: value.captchaToken } });
   if (error) throw new HttpError(400, "The code is invalid or expired.");
   return json({ ok: true });
 });
