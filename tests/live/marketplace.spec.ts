@@ -132,7 +132,12 @@ test("real identity, private upload, MFA review, contact, inquiry and expiry", a
     const overwritten = await buyerPage.request.post("/api/listings", { headers, data: { id, category: "rent", content: listing.draft_content } });
     expect(overwritten.status()).toBe(403);
     await buyerPage.goto("/listings/" + id);
+    const revealing = buyerPage.waitForResponse(response => response.url().endsWith("/api/contact") && response.request().method() === "POST");
     await buyerPage.getByRole("button", { name: "Show seller contact", exact: true }).click();
+    const contactResponse = await revealing;
+    const contact = await contactResponse.json();
+    expect(contactResponse.status(), contact.error || "Contact rejected").toBe(200);
+    expect(contact.phone.replace(/\\D/g,"")).toBe("9779800000001");
     await expect(buyerPage.getByRole("link", { name: "+9779800000001", exact: true })).toBeVisible();
     await buyerPage.getByLabel("Ask about this listing", { exact: true }).fill("Could I inspect this flat tomorrow afternoon?");
     await buyerPage.getByRole("button", { name: "Send inquiry", exact: true }).click();
