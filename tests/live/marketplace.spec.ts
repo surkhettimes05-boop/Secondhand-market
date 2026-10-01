@@ -11,7 +11,11 @@ async function signIn(page: Page, phone: string) {
   const sending = page.waitForResponse(response => response.url().endsWith("/api/auth") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Send code", exact: true }).click();
   const sent = await sending;
-  expect(sent.status(), await sent.text()).toBe(200);
+  if (sent.status() !== 200) {
+    const probe = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, { auth: { persistSession: false } });
+    const result = await probe.auth.signInWithOtp({ phone: "+977" + phone });
+    throw new Error("Local OTP diagnostic: " + JSON.stringify({ api: await sent.json(), code: result.error?.code, status: result.error?.status, message: result.error?.message }));
+  }
   await expect(page.getByLabel("6-digit code", { exact: true })).toBeVisible();
   await page.getByLabel("6-digit code", { exact: true }).fill("123456");
   await page.getByRole("button", { name: "Verify and sign in", exact: true }).click();
