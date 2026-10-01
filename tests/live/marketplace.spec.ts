@@ -137,7 +137,7 @@ test("real identity, private upload, MFA review, contact, inquiry and expiry", a
     const contactResponse = await revealing;
     const contact = await contactResponse.json();
     expect(contactResponse.status(), contact.error || "Contact rejected").toBe(200);
-    expect(contact.phone.replace(/\\D/g,"")).toBe("9779800000001");
+    expect(contact.phone.replace(/\D/g,"")).toBe("9779800000001");
     await expect(buyerPage.getByRole("link", { name: "+9779800000001", exact: true })).toBeVisible();
     await buyerPage.getByLabel("Ask about this listing", { exact: true }).fill("Could I inspect this flat tomorrow afternoon?");
     await buyerPage.getByRole("button", { name: "Send inquiry", exact: true }).click();
