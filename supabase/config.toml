@@ -1,0 +1,46 @@
+# LOCAL DEVELOPMENT AND CI ONLY. Never enable fixed test OTPs on hosted production.
+project_id = "surkhet-market"
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+[studio]
+enabled = false
+[inbucket]
+enabled = false
+[storage]
+enabled = true
+file_size_limit = "10MiB"
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["http://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+[auth.sms]
+enable_signup = true
+enable_confirmations = true
+template = "Your Surkhet Market code is {{ .Code }}"
+max_frequency = "1m"
+[auth.sms.test_otp]
+"9779800000001" = "123456"
+"9779800000002" = "123456"
+"9779800000003" = "123456"
+"9779800000004" = "123456"
+[auth.mfa]
+max_enrolled_factors = 3
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+[analytics]
+enabled = false
+[realtime]
+enabled = false
+[edge_runtime]
+enabled = false
