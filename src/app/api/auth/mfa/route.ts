@@ -24,7 +24,7 @@ export const POST = handle(async request => {
     if (existing.data?.totp.some(factor => factor.status === "verified")) throw new HttpError(400, "An authenticator is already enrolled; verify it instead.");
     for (const factor of existing.data?.all ?? []) if (factor.status === "unverified") await client.auth.mfa.unenroll({ factorId: factor.id });
     const { data, error } = await client.auth.mfa.enroll({ factorType: "totp", friendlyName: "Surkhet Market", issuer: "Surkhet Market" });
-    if (error) throw new HttpError(400, "Authenticator enrollment failed. Try again.");
+    if (error) { console.warn("Authenticator enrollment rejected", { code: error.code, status: error.status }); throw new HttpError(400, "Authenticator enrollment failed. Try again."); }
     return json({ factorId: data.id, qrCode: data.totp.qr_code, setupKey: data.totp.secret });
   }
   const { error } = await client.auth.mfa.challengeAndVerify({ factorId: value.factorId, code: value.code });
