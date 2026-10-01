@@ -8,7 +8,10 @@ const headers = { origin };
 async function signIn(page: Page, phone: string) {
   await page.goto("/login");
   await page.getByLabel("Mobile number", { exact: true }).fill(phone);
+  const sending = page.waitForResponse(response => response.url().endsWith("/api/auth") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Send code", exact: true }).click();
+  const sent = await sending;
+  expect(sent.status(), await sent.text()).toBe(200);
   await expect(page.getByLabel("6-digit code", { exact: true })).toBeVisible();
   await page.getByLabel("6-digit code", { exact: true }).fill("123456");
   await page.getByRole("button", { name: "Verify and sign in", exact: true }).click();
