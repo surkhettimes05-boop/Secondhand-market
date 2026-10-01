@@ -59,6 +59,7 @@ test("real PostgreSQL permissions, review snapshots, MFA and expiry", { skip: !p
       await acting(null);
       assert.equal((await connection.query("select public.market_catalog() as data")).rows[0].data.length,0);
       assert.equal((await connection.query("select public.market_public_media($1) as visible",[objectPath])).rows[0].visible,false);
+      assert.equal((await connection.query("select name from storage.objects where bucket_id=\'market-media\' and name=$1",[objectPath])).rowCount,0);
       await denied("select public.market_contact($1)",[id]);
     });
     await context.test("moderator membership alone is insufficient; MFA then permits approval", async () => {
@@ -75,6 +76,7 @@ test("real PostgreSQL permissions, review snapshots, MFA and expiry", { skip: !p
       assert.ok(!JSON.stringify(catalog).includes("DO-NOT-EXPOSE"));
       assert.ok(!JSON.stringify(catalog).includes("9779800000091"));
       assert.equal((await connection.query("select public.market_public_media($1) as visible",[objectPath])).rows[0].visible,true);
+      assert.equal((await connection.query("select name from storage.objects where bucket_id=\'market-media\' and name=$1",[objectPath])).rowCount,1);
     });
     await context.test("edits preserve approved public content and inquiry phone disclosure is opt-in", async () => {
       await acting(seller);
@@ -94,6 +96,7 @@ test("real PostgreSQL permissions, review snapshots, MFA and expiry", { skip: !p
       await acting(null);
       assert.equal((await connection.query("select public.market_catalog() as data")).rows[0].data.length,0);
       assert.equal((await connection.query("select public.market_public_media($1) as visible",[objectPath])).rows[0].visible,false);
+      assert.equal((await connection.query("select name from storage.objects where bucket_id=\'market-media\' and name=$1",[objectPath])).rowCount,0);
       await acting(buyer);
       await denied("select public.market_contact($1)",[id]);
       await connection.query("reset role");
