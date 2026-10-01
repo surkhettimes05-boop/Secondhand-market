@@ -41,7 +41,7 @@ jobs:
           node-version: "22"
       - run: npm install --no-audit --no-fund
       - name: Start isolated local Supabase (no live provider credentials)
-        run: npx supabase start --exclude studio,realtime,imgproxy,inbucket,logflare,vector,edge-runtime
+        run: npx supabase start --exclude studio,realtime,imgproxy,logflare,vector,edge-runtime
       - name: Configure local integration environment without logging keys
         run: |
           npx supabase status -o json > /tmp/surkhet-ci-backend.json
