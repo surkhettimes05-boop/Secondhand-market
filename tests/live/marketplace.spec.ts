@@ -89,6 +89,27 @@ test("real identity, private upload, MFA review, contact, inquiry and expiry", a
 
     await signIn(adminPage, "9800000003");
     expect((await adminPage.request.get("/api/moderation")).status()).toBe(403);
+    expect((await adminPage.request.post("/api/auth/mfa", { headers, data: { action: "enroll" } })).status()).toBe(400);
+    await adminPage.getByLabel("Moderator email", { exact: true }).fill("moderator@example.test");
+    const emailing = adminPage.waitForResponse(response => response.url().endsWith("/api/auth/mfa") && response.request().method() === "POST");
+    await adminPage.getByRole("button", { name: "Send email code", exact: true }).click();
+    const emailResponse = await emailing;
+    expect(emailResponse.status(), await emailResponse.text()).toBe(200);
+    let emailToken = "";
+    await expect.poll(async () => {
+      const response = await fetch("http://127.0.0.1:54324/api/v1/messages");
+      const mailbox = await response.json();
+      const message = mailbox.messages?.find((message: { To?: { Address: string }[] }) => message.To?.some(recipient => recipient.Address === "moderator@example.test"));
+      if (!message) return false;
+      const detail = await (await fetch("http://127.0.0.1:54324/api/v1/message/" + message.ID)).json();
+      emailToken = (detail.Text || detail.HTML || "").match(/(?:^|[^0-9])([0-9]{6})(?:[^0-9]|$)/)?.[1] || "";
+      return !!emailToken;
+    }).toBe(true);
+    await adminPage.getByLabel("Email verification code", { exact: true }).fill(emailToken);
+    const verifyingEmail = adminPage.waitForResponse(response => response.url().endsWith("/api/auth/mfa") && response.request().method() === "POST");
+    await adminPage.getByRole("button", { name: "Verify moderator email", exact: true }).click();
+    const emailVerified = await verifyingEmail;
+    expect(emailVerified.status(), await emailVerified.text()).toBe(200);
     const enrolling = adminPage.waitForResponse(response => response.url().endsWith("/api/auth/mfa") && response.request().method() === "POST");
     await adminPage.getByRole("button", { name: "Set up authenticator", exact: true }).click();
     const enrollmentResponse = await enrolling;
