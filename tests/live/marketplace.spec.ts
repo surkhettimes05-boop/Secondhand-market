@@ -91,7 +91,9 @@ test("real identity, private upload, MFA review, contact, inquiry and expiry", a
     expect((await adminPage.request.get("/api/moderation")).status()).toBe(403);
     const enrolling = adminPage.waitForResponse(response => response.url().endsWith("/api/auth/mfa") && response.request().method() === "POST");
     await adminPage.getByRole("button", { name: "Set up authenticator", exact: true }).click();
-    const enrollment = await (await enrolling).json();
+    const enrollmentResponse = await enrolling;
+    const enrollment = await enrollmentResponse.json();
+    expect(enrollmentResponse.status(), enrollment.error || "Enrollment rejected").toBe(200);
     expect(enrollment.factorId).toBeTruthy();
     await adminPage.getByLabel("Authenticator code", { exact: true }).fill(totp(enrollment.setupKey));
     await adminPage.getByRole("button", { name: "Verify authenticator", exact: true }).click();
