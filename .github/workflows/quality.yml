@@ -9,7 +9,7 @@ concurrency:
   group: quality-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  verify:
+  preview:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -26,8 +26,39 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: browser-review
+          name: preview-browser-review
           path: |
             playwright-report/
             test-results/
           retention-days: 7
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --no-audit --no-fund
+      - name: Start isolated local Supabase (no live provider credentials)
+        run: npx supabase start --exclude studio,realtime,imgproxy,inbucket,logflare,vector,edge-runtime
+      - name: Configure local integration environment without logging keys
+        run: |
+          npx supabase status -o json > /tmp/surkhet-ci-backend.json
+          node scripts/ci-backend-env.mjs
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e:live
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-browser-review
+          path: |
+            playwright-live-report/
+            test-results/
+          retention-days: 7
+      - name: Stop local backend
+        if: always()
+        run: npx supabase stop --no-backup
