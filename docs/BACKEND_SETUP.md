@@ -10,7 +10,7 @@ The executable schema is under `supabase/migrations`. The old `db/001_marketplac
 
 1. Create/select a Supabase project. Review its region, billing and backup plan.
 2. Enable phone authentication, configure a Nepal-compatible SMS provider, and test real delivery. Set OTP expiry to 300 seconds, resend cooldown of at least 60 seconds, appropriate send/verification limits and production bot protection. For Turnstile, configure native Supabase CAPTCHA with the secret key and set NEXT_PUBLIC_TURNSTILE_SITE_KEY before building the app. The login screen submits provider challenge tokens.
-3. Enable TOTP MFA. Moderators need a verified phone and enrolled authenticator.
+3. Enable TOTP MFA and configure authenticated email delivery. Moderators need a verified phone, verified email and enrolled authenticator. The account screen supports attaching/verifying that email using Supabase email-change OTPs. Include {{ .Token }} in the Supabase Change Email Address template; keep secure email-change verification enabled. Phone-only buyers/sellers do not need email.
 4. Apply migrations with the Supabase CLI against the selected project. Review migration output and RLS tests first.
 5. Configure server environment values privately:
    - `MARKET_MODE=live`
@@ -22,7 +22,7 @@ The executable schema is under `supabase/migrations`. The old `db/001_marketplac
 6. Assign a moderator manually in the trusted SQL console, using their actual verified user UUID:
    `insert into private.market_moderators(user_id) values ('ACTUAL_USER_UUID');`
    This membership table has no public self-registration path.
-7. Sign in as that moderator, enroll an authenticator in Account, verify it, and open Moderation.
+7. Sign in as that moderator, verify their email in Account, enroll an authenticator, verify it, and open Moderation.
 8. Submit an authorized real listing, upload actual photos, and approve it using a different moderator account.
 9. Test contact consent, inquiries, expiry, reporting and appeals before inviting real users.
 
@@ -30,11 +30,11 @@ Never share private keys in chat or commit them to GitHub. `.env.example` contai
 
 ## Local development / CI
 
-The checked-in `supabase/config.toml` is **local-only**. Its fixed SMS test codes use synthetic phone numbers solely for isolated integration tests. They must never be configured on hosted production.
+The checked-in `supabase/config.toml` is **local-only**. Its fixed SMS test codes use synthetic phone numbers solely for isolated integration tests. They must never be configured on hosted production. Dummy local Twilio values only enable test OTPs and cannot send SMS. Local email is captured by the isolated mail server.
 
 With Docker and Node.js 22 available:
 1. `npm install`
-2. `npx supabase start --exclude studio,realtime,imgproxy,inbucket,logflare,vector,edge-runtime`
+2. `npx supabase start --exclude studio,realtime,imgproxy,logflare,vector,edge-runtime`
 3. Obtain local status and configure a private `.env.local`; do not dump hosted secrets.
 4. `npm run typecheck`, `npm test`, `npm run build`.
 5. `npx playwright install chromium` and `npm run test:e2e:live`.
