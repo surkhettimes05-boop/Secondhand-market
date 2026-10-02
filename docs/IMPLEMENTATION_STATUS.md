@@ -1,55 +1,34 @@
 # Implementation status
 
-Date: 2026-10-01  
-Branch: feat/marketplace-foundation  
-Pull request: https://github.com/surkhettimes05-boop/Secondhand-market/pull/1
+Updated: 2026-10-02
+Branch: `feat/marketplace-foundation`
+[Pull request #1](https://github.com/surkhettimes05-boop/Secondhand-market/pull/1)
 
 ## Delivered
 
-- Next.js/TypeScript application skeleton and responsive design system.
-- Home, searchable inventory, listing detail, saved listings, four-stage posting and preview-information pages.
-- English/Nepali UI, clear prototype disclosure and sample-specific descriptions.
-- Working URL filters, category/price sorting, local favorites and local text drafts.
-- Temporary photo previews with explicit non-upload/non-persistence messaging.
-- Domain tests for decimal money, bilingual filtering, status exclusion, URL normalization and draft costs.
-- Desktop/mobile browser tests for home layout, search/reset, favorites/language persistence and draft validation/restoration.
-- CI typecheck/test/build/browser verification and screenshot artifacts.
-- Proposed PostgreSQL schema baseline; not applied or connected.
+The responsive Next.js/TypeScript marketplace now includes both a labelled preview and a configurable Supabase backend.
 
-## Verification evidence
+- Photo-led home page, search/filter/sort, listing details, saved listings and four-stage posting.
+- English/Nepali UI with separate rental costs, seller-role disclosures and clear verification boundaries.
+- Phone login, persistent drafts and structured rental/land/item fields.
+- Actual photo decoding/resizing/metadata removal and private storage.
+- Moderator email verification, native TOTP MFA, review and publication.
+- Owner availability controls, phone-consent withdrawal, inquiries, reports, appeals, notifications and expiry.
+- Database authorization, domain validation, desktop/mobile browser checks and isolated backend integration CI.
 
-Verified implementation commit: `97c14c2388b2300a76901675090d7c33ad60f295`.
+The executable database schema is under `supabase/migrations`; it has been applied and tested locally in CI. The older `db/001_marketplace_foundation.sql` planning baseline must not be applied alongside it.
 
-[GitHub Actions run](https://github.com/surkhettimes05-boop/Secondhand-market/actions/runs/36917000463) completed successfully:
-- Dependency installation.
-- TypeScript type check.
-- Domain tests.
-- Next.js production build.
-- Playwright tests against the production server on desktop Chrome and mobile Chrome.
-- Screenshot/report artifact upload: `browser-review`.
+## Verified
 
-Screenshots of home and posting review are in the artifact alongside test reports. The browser suite checks home horizontal overflow, page errors, URL filters, local favorites, language persistence and draft validation/save/restore.
+Code commit: `f1118eb3ab8608791ce6549fa10298a62b23399e`.
+[GitHub Actions evidence](https://github.com/surkhettimes05-boop/Secondhand-market/actions/runs/36944356949): preview and backend jobs succeeded, including type checks, production builds, domain/database tests and browser tests.
 
-The connected cloud execution environment remained pending/offline, so verification ran in GitHub Actions. Screenshots have not received a manual visual review. Automated success does not establish WCAG compliance, local usability, production readiness or SMS/provider feasibility.
+[Backend status](BACKEND_STATUS.md) records the exact test scope and limits. [Backend setup](BACKEND_SETUP.md) explains live provisioning and moderator onboarding.
 
-No production deployment was requested or performed. The SQL baseline is not executed or verified against a database.
+## Outstanding
 
-## Remaining work
+Real Supabase/SMS/SMTP configuration and deployment remain. Public launch also requires verified local geography, operator/support details and legal review, approved real supply, manual design/accessibility review, licensed fonts, dependency locking, retention/erasure/media cleanup, production restore/monitoring and pilot checks.
 
-- Local research and validated ward/neighbourhood directory.
-- Licensed self-hosted typography and final brand.
-- Reviewed dependency lockfile and manual screenshot/accessibility review.
-- OTP/admin MFA, accounts, server authorization and provider selection.
-- PostgreSQL persistence, structured category fields and media processing.
-- Moderation/revisions/reports/appeals.
-- Availability jobs and genuine contact consent/reveal/inquiries.
-- Retention/deletion/backup/monitoring.
-- Approved real inventory, policies/legal review and pilot launch gates.
+Server pagination and live photo removal/reordering remain further implementation work. Contact reveal and reports currently require sign-in; public anonymous contact would need an additional trusted rate-control design.
 
-## Scope boundaries
-
-This slice starts the plan with a tested prototype plus initial foundation. It does not claim completion of Phase 0 or production R1. Sample localities are placeholders; no validated ward/boundary claim is made.
-
-Posting groups category details in a prototype text field. The backend phase must implement all structured PRD fields and server-side validation. Only text drafts/favorites/language persist locally; photos remain temporary.
-
-Real publishing and seller contact remain unavailable until identity, permissions, moderation and consent are implemented. PR stays draft pending manual design review and backend phase planning.
+The PR remains draft for design review and live configuration. No production deployment has been performed. This delivers the preview and backend implementation phases, not the entire PRD or a launch-ready marketplace.
