@@ -90,6 +90,21 @@ test("real PostgreSQL permissions, review snapshots, MFA and expiry", { skip: !p
       const inbox=(await connection.query("select public.market_inbox() as data")).rows[0].data;
       assert.equal(inbox[0].senderPhone,null);
     });
+    await context.test("phone revocation also withdraws pending consent before approval", async () => {
+      await acting(seller);
+      await connection.query("select public.market_submit($1)",[id]);
+      await connection.query("select public.market_transition($1,'revoke_contact')",[id]);
+      await acting(buyer);
+      await denied("select public.market_contact($1)",[id]);
+      await acting(moderator,"aal2");
+      await connection.query("select public.market_review($1,'approve','Updated title with withdrawn contact consent')",[id]);
+      await acting(buyer);
+      await denied("select public.market_contact($1)",[id]);
+      await acting(seller);
+      const consent=(await connection.query("select draft_content->>'phonePublic' as phone,draft_content->>'whatsapp' as whatsapp from public.market_listings where id=$1",[id])).rows[0];
+      assert.equal(consent.phone,"false");
+      assert.equal(consent.whatsapp,"false");
+    });
     await context.test("expiry blocks public reads, photos and contact even before scheduled jobs", async () => {
       await connection.query("reset role");
       await connection.query("update public.market_listings set expires_at=now()-interval '1 second' where id=$1",[id]);
