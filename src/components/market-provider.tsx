@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Language, Listing } from "@/lib/market";
 import { api, ApiError } from "@/lib/api-client";
@@ -9,6 +9,8 @@ type ContextValue = {
   setLanguage: (language: Language) => void;
   t: (en: string, ne: string) => string;
   saved: string[];
+  savingIds: string[];
+  saveErrors: Record<string,string>;
   toggleSaved: (id: string) => void;
   ready: boolean;
   storageWarning: boolean;
@@ -21,6 +23,11 @@ const Context = createContext<ContextValue | null>(null);
 export function MarketProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>("en");
   const [saved, setSaved] = useState<string[]>([]);
+  const [savingIds,setSavingIds]=useState<string[]>([]);
+  const [saveErrors,setSaveErrors]=useState<Record<string,string>>({});
+  const [favoritesReady,setFavoritesReady]=useState(false);
+  const pendingSaves=useRef(new Set<string>());
+  const favoritesVersion=useRef(0);
   const [ready, setReady] = useState(false);
   const [storageWarning, setStorageWarning] = useState(false);
   const [inventory, setInventory] = useState<Listing[]>([]);
@@ -52,7 +59,9 @@ export function MarketProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let alive = true;
     if (mode === "live") {
-      api<{ ids: string[] }>("/api/favorites").then(result => { if (alive) setSaved(result.ids); }).catch(() => { if (alive) setSaved([]); });
+      setFavoritesReady(false);
+      const version=favoritesVersion.current;
+      api<{ ids: string[] }>("/api/favorites").then(result => { if (alive && version===favoritesVersion.current) setSaved(result.ids); }).catch(() => { if (alive && version===favoritesVersion.current) setSaved([]); }).finally(()=>{if(alive)setFavoritesReady(true);});
     } else if (mode === "preview") {
       try {
         const parsed: unknown = JSON.parse(localStorage.getItem("surkhet-saved") || "[]");
@@ -63,13 +72,16 @@ export function MarketProvider({ children }: { children: React.ReactNode }) {
   }, [mode, pathname]);
   async function toggleSaved(id: string) {
     if (mode === "live") {
+      if(pendingSaves.current.has(id))return;
+      pendingSaves.current.add(id);favoritesVersion.current++;
+      setSavingIds(current=>[...current,id]);setSaveErrors(current=>({...current,[id]:""}));
       try {
         const result = await api<{ ids: string[] }>("/api/favorites", { id });
         setSaved(result.ids);
       } catch (error) {
         if (error instanceof ApiError && error.status === 401) router.push("/login?next=" + encodeURIComponent(pathname));
-        else setCatalogError("Could not update saved listings. Try again.");
-      }
+        else setSaveErrors(current=>({...current,[id]:"Could not update saved listings. Try again."}));
+      } finally { pendingSaves.current.delete(id);setSavingIds(current=>current.filter(value=>value!==id)); }
       return;
     }
     if (mode !== "preview") return;
@@ -81,7 +93,7 @@ export function MarketProvider({ children }: { children: React.ReactNode }) {
   }
   return <Context.Provider value={{
     language, setLanguage, t: (en, ne) => language === "en" ? en : ne,
-    saved, toggleSaved, ready: ready && mode !== "loading", storageWarning,
+    saved, savingIds, saveErrors, toggleSaved, ready: ready && mode !== "loading" && (mode!=="live"||favoritesReady), storageWarning,
     inventory, mode, catalogError, reloadCatalog: () => setRevision(current => current + 1),
   }}>{children}</Context.Provider>;
 }
