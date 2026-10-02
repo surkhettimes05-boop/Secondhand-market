@@ -145,7 +145,11 @@ test("real identity, private upload, MFA review, contact, inquiry and expiry", a
     const inbox = await (await page.request.get("/api/inquiries")).json();
     expect(inbox.inquiries[0].body).toContain("tomorrow");
     expect(inbox.inquiries[0].senderPhone).toBeNull();
+    const saving = buyerPage.waitForResponse(response => response.url().endsWith("/api/favorites") && response.request().method() === "POST");
     await buyerPage.getByRole("button", { name: "Save", exact: true }).click();
+    const saveResponse = await saving;
+    expect(saveResponse.status(), await saveResponse.text()).toBe(200);
+    await expect(buyerPage.getByRole("button", { name: "Saved", exact: true })).toBeVisible();
     await buyerPage.goto("/saved");
     await expect(buyerPage.locator("article")).toHaveCount(1);
     await buyerPage.goto("/listings/" + id);
