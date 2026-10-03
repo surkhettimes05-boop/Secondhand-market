@@ -9,7 +9,9 @@
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "test:e2e": "playwright test",
-    "test:e2e:live": "playwright test --config=playwright.live.config.ts"
+    "test:e2e:live": "playwright test --config=playwright.live.config.ts",
+    "prebuild": "node scripts/check-deployment.mjs",
+    "deploy:check": "node scripts/check-deployment.mjs"
   },
   "dependencies": {
     "next": "^16.2.0",
@@ -31,5 +33,8 @@
     "pg": "^8.16.0",
     "@types/pg": "^8.15.0",
     "supabase": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=22.18.0 <23"
   }
 }
