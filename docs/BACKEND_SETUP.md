@@ -6,6 +6,8 @@ Supabase provides phone identity, PostgreSQL and private processed-photo storage
 
 The executable schema is under `supabase/migrations`. The old `db/001_marketplace_foundation.sql` is an earlier planning baseline; **do not apply it alongside these migrations**.
 
+See [DEPLOYMENT.md](DEPLOYMENT.md) for Vercel deployment and [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md) for the latest verified code.
+
 ## Live project prerequisites
 
 1. Create/select a Supabase project. Review its region, billing and backup plan.
@@ -33,7 +35,7 @@ Never share private keys in chat or commit them to GitHub. `.env.example` contai
 The checked-in `supabase/config.toml` is **local-only**. Its fixed SMS test codes use synthetic phone numbers solely for isolated integration tests. They must never be configured on hosted production. Dummy local Twilio values only enable test OTPs and cannot send SMS. Local email is captured by the isolated mail server.
 
 With Docker and Node.js 22 available:
-1. `npm install`
+1. `npm ci`
 2. `npx supabase start --exclude studio,realtime,imgproxy,logflare,vector,edge-runtime`
 3. Obtain local status and configure a private `.env.local`; do not dump hosted secrets.
 4. `npm run typecheck`, `npm test`, `npm run build`.
@@ -50,7 +52,7 @@ Node test database assertions run when DATABASE_URL is present. Browser integrat
 - Editing preserves approved content until a moderator approves the new draft.
 - Public data uses an explicit allowlist and excludes phone numbers.
 - Private bucket policies prevent anonymous access before approval and after expiry/removal.
-- Uploads decode/re-encode static JPEG/PNG/WebP, remove metadata, enforce size/pixel limits and store WebP derivatives.
+- Uploads decode/re-encode static JPEG/PNG/WebP, remove metadata, enforce the 3 MB source/pixel limits and store WebP derivatives.
 - Publication requires at least one registered photo and category-specific disclosures.
 - Native SMS rate/bot controls must be configured in Supabase; an application endpoint alone cannot protect a public auth provider.
 - Contact reveal currently requires sign-in and seller consent, with per-account database limits. This is stricter than the PRD's initial anonymous-call concept; public reveal needs a trusted edge rate-limiting design before enabling it.
