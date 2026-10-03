@@ -43,3 +43,7 @@ The server-only service key is used for processed storage operations and expiry 
 Uploading code does not provision real SMS/database services or deploy a production marketplace. See setup/status documents for verified checks, deliberate boundaries and remaining launch gates. Photo removal/reorder, retention/erasure, orphan cleanup and scaling remain further work.
 
 Homepage illustrative photography comes from Unsplash; Google Fonts is temporary. Real listings require seller-owned/authorized photos. Self-host licensed brand fonts before public launch.
+
+## Vercel deployment source
+
+The connected Vercel project must deploy `feat/marketplace-foundation`. Deploy this branch once before selecting an existing deployment for the production domain. Keep `MARKET_MODE=preview` until hosted Supabase and authentication services are configured.
