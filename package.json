@@ -1,0 +1,40 @@
+{
+  "name": "surkhet-market",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:live": "playwright test --config=playwright.live.config.ts",
+    "prebuild": "node scripts/check-deployment.mjs",
+    "deploy:check": "node scripts/check-deployment.mjs"
+  },
+  "dependencies": {
+    "next": "^16.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "lucide-react": "^0.468.0",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.0",
+    "zod": "^4.1.0",
+    "sharp": "^0.34.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.8.0",
+    "@playwright/test": "^1.51.0",
+    "pg": "^8.16.0",
+    "@types/pg": "^8.15.0",
+    "supabase": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=22.18.0 <23"
+  }
+}
