@@ -6,6 +6,8 @@ A mobile-first local marketplace for Birendranagar: land sales, housing rentals 
 - [Phased implementation/design plan](docs/IMPLEMENTATION_PLAN.md)
 - [Backend setup](docs/BACKEND_SETUP.md)
 - [Backend status](docs/BACKEND_STATUS.md)
+- [Deployment guide](docs/DEPLOYMENT.md)
+- [Deployment verification](docs/DEPLOYMENT_STATUS.md)
 
 ## Modes
 
@@ -17,9 +19,11 @@ A mobile-first local marketplace for Birendranagar: land sales, housing rentals 
 
 Node.js 22.18+ required.
 
-1. `npm install`
+1. `npm ci`
 2. Copy `.env.example` to private `.env.local` (leave MARKET_MODE=preview to explore without services).
 3. `npm run dev`, then open http://localhost:3000.
+
+Deployment configuration: `npm run deploy:check` (also runs before builds).
 
 Checks: `npm run typecheck`, `npm test`, `npm run build`.
 
