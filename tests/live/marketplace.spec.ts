@@ -52,6 +52,9 @@ test("real identity, private upload, MFA review, contact, inquiry and expiry", a
   const adminPage = await adminContext.newPage();
   const buyerPage = await buyerContext.newPage();
   try {
+    const health = await anonymous.get("/api/health");
+    expect(health.status()).toBe(200);
+    expect(await health.json()).toEqual({ status: "ok", mode: "live", database: "reachable" });
     await signIn(page, "9800000001");
     await page.goto("/post");
     await page.getByRole("button", { name: "Continue", exact: true }).click();
