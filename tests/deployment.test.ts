@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-// @ts-expect-error Runtime-only Node deployment utility.
 import { deploymentProblems } from "../scripts/deployment-config.mjs";
 const local = { MARKET_MODE:"live", APP_ORIGIN:"http://127.0.0.1:3000", SUPABASE_URL:"http://127.0.0.1:54321", SUPABASE_ANON_KEY:"fixture", SUPABASE_SERVICE_ROLE_KEY:"fixture", CRON_SECRET:"x".repeat(32) };
 test("deployment rejects incomplete live settings and public secrets", () => {
