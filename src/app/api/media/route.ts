@@ -16,12 +16,12 @@ export const GET = handle(async request => {
 export const POST = handle(async request => {
   sameOrigin(request);
   const { client, user } = await actor();
-  const buffer = await limitedBody(request, 11 * 1024 * 1024);
+  const buffer = await limitedBody(request, Math.floor(3.5 * 1024 * 1024));
   const body = new Request("http://upload.invalid", { method: "POST", headers: { "content-type": request.headers.get("content-type") || "" }, body: Buffer.from(buffer) });
   const form = await body.formData();
   const id = z.string().uuid().parse(form.get("listingId"));
   const file = form.get("file");
-  if (!(file instanceof File) || file.size > 10 * 1024 * 1024 || !["image/jpeg","image/png","image/webp"].includes(file.type)) throw new HttpError(400, "Choose a JPEG, PNG or WebP photo up to 10 MB.");
+  if (!(file instanceof File) || file.size > 3 * 1024 * 1024 || !["image/jpeg","image/png","image/webp"].includes(file.type)) throw new HttpError(400, "Choose a JPEG, PNG or WebP photo up to 3 MB.");
   const { data: listing, error } = await client.from("market_listings").select("id,owner_id,review_status,status").eq("id", id).single();
   databaseError(error);
   if (!listing || listing.owner_id !== user.id || listing.review_status === "pending" || ["sold","rented","removed","withdrawn"].includes(listing.status)) throw new HttpError(403, "This listing cannot receive photos.");
